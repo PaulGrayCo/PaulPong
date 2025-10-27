@@ -19,6 +19,7 @@ public class AIPaddle : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
         
         // Find the ball in the scene
         ball = GameObject.FindGameObjectWithTag("Ball").transform;

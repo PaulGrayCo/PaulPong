@@ -20,7 +20,8 @@ public class Ball : MonoBehaviour
 
     void Start()
 {
-    rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
     
     // Get or create AudioSource component
     audioSource = GetComponent<AudioSource>();
@@ -54,47 +55,55 @@ public class Ball : MonoBehaviour
     
     void OnCollisionEnter2D(Collision2D collision)
 {
+    Debug.Log("Ball hit: " + collision.gameObject.name + " | Tag: " + collision.gameObject.tag);
+
     // When ball hits a paddle
     if (collision.gameObject.CompareTag("Paddle"))
     {
+        Debug.Log("Paddle hit detected! Current velocity: " + rb.linearVelocity);
+
         // Play paddle sound with safety check
         if (audioSource != null && paddleHitSound != null)
         {
             audioSource.PlayOneShot(paddleHitSound);
         }
-        
+
         // SCREEN SHAKE - stronger shake for paddle hits
         if (CameraShake.Instance != null)
         {
             CameraShake.Instance.StartShake(0.15f, 0.1f);
         }
-        
+
         // Increase speed
         float currentSpeed = rb.linearVelocity.magnitude;
         currentSpeed = Mathf.Min(currentSpeed + speedIncrease, maxSpeed);
-        
+
         // Calculate bounce direction
         Vector2 direction = rb.linearVelocity.normalized;
-        
+
         // Add some variation based on where the ball hits the paddle
-        float hitFactor = (transform.position.y - collision.transform.position.y) 
+        float hitFactor = (transform.position.y - collision.transform.position.y)
                         / collision.collider.bounds.size.y;
-        
+
         // Adjust the Y direction based on hit position
         direction.y = hitFactor;
         direction = direction.normalized;
-        
+
         // Apply new velocity
         rb.linearVelocity = direction * currentSpeed;
+
+        Debug.Log("New velocity after paddle hit: " + rb.linearVelocity);
     }
     else // Hit a wall
     {
+        Debug.Log("Wall hit detected!");
+
         // Play wall sound with safety check
         if (audioSource != null && wallHitSound != null)
         {
             audioSource.PlayOneShot(wallHitSound);
         }
-        
+
         // SCREEN SHAKE - lighter shake for walls
         if (CameraShake.Instance != null)
         {

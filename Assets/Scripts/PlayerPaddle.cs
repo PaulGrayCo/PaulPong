@@ -14,6 +14,7 @@ public class PlayerPaddle : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
     }
     
     void FixedUpdate()
